@@ -52,10 +52,10 @@ public class UserRepositoryImpl implements UserRepository{
             User user = jdbcTemplate.queryForObject(SQL_FIND_BY_EMAIL, new Object[]{email}, userRowMapper);
             if(!BCrypt.checkpw(password,user.getPassword()))
                 throw new EtAuthException("Invalid email/password");
+            return user;
         }catch (EmptyResultDataAccessException e){
             throw new EtAuthException("Invalid email/password");
         }
-        return null;
     }
 
     @Override
