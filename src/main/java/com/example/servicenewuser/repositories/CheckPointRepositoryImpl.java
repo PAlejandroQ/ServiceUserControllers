@@ -20,14 +20,14 @@ import java.util.List;
 @Repository
 public class CheckPointRepositoryImpl implements CheckPointRepository{
 
-    private static final String SQL_FIND_ALL_CURRENT = "";
-    private static final String SQL_FIND_ALL_HISTORIC = "";
-    private static final String SQL_CREATE = "";
-    private static final String SQL_FIND_ALL_BETWEEN_DATES = "";
-    private static final String SQL_FIND_BY_ID_CURRENT = "";
-    private static final String SQL_FIND_BY_ID_HISTORIC= "";
-    private static final String SQL_DELETE_BEFORE_DATE= "";
-    private static final String SQL_DELETE_ALL= "";
+    private static final String SQL_FIND_ALL_CURRENT = "SELECT * FROM latest_et_checkpoints";
+    private static final String SQL_FIND_ALL_HISTORIC = "SELECT * FROM et_checkpoints";
+    private static final String SQL_CREATE = "INSERT INTO et_checkpoints (checkpoint_id, user_id, sector_id, point_gps, state, report_date) VALUES(NEXTVAL('ET_checkpoints_SEQ'), ? ,?,?,?,?)";
+    private static final String SQL_FIND_ALL_BETWEEN_DATES = "SELECT * FROM et_checkpoints c WHERE c.report_date BETWEEN ? AND ?";
+    private static final String SQL_FIND_BY_ID_CURRENT = "SELECT * FROM latest_et_checkpoints c WHERE c.checkpoint_id = ? ";
+    private static final String SQL_FIND_BY_ID_HISTORIC= "SELECT * FROM et_checkpoints c WHERE c.report_date == ?";
+    private static final String SQL_DELETE_BEFORE_DATE= " DELETE FROM et_checkpoints c WHERE c.report_date < ?";
+    private static final String SQL_DELETE_ALL= " DELETE FROM et_checkpoints";
     @Autowired
     JdbcTemplate jdbcTemplate;
     @Override
@@ -46,12 +46,11 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, newCheckPoint.getCheckpointId());
-                ps.setObject(2, newCheckPoint.getUserId());
-                ps.setLong(3, newCheckPoint.getSectorId());
-                ps.setObject(4, newCheckPoint.getPoint_gps());
-                ps.setObject(5, newCheckPoint.getState());
-                ps.setLong(6, newCheckPoint.getCheckPointDate());
+                ps.setObject(1, newCheckPoint.getUserId());
+                ps.setLong(2, newCheckPoint.getSectorId());
+                ps.setObject(3, newCheckPoint.getPoint_gps());
+                ps.setObject(4, newCheckPoint.getState());
+                ps.setLong(5, newCheckPoint.getCheckPointDate());
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("checkpoint_id");
