@@ -17,14 +17,14 @@ import java.sql.Statement;
 import java.util.List;
 @Repository
 public class SectorRepositoryImpl implements SectorRepository {
-    private static final String SQL_FIND_ALL_CURRENT = "";
-    private static final String SQL_FIND_ALL_HISTORIC = "";
-    private static final String SQL_CREATE = "";
-    private static final String SQL_FIND_ALL_BETWEEN_DATES = "";
-    private static final String SQL_FIND_BY_ID_CURRENT = "";
-    private static final String SQL_FIND_BY_ID_HISTORIC= "";
-    private static final String SQL_DELETE_BEFORE_DATE= "";
-    private static final String SQL_DELETE_ALL= "";
+    private static final String SQL_FIND_ALL_CURRENT = "SELECT * FROM latest_et_sectors";
+    private static final String SQL_FIND_ALL_HISTORIC = "SELECT * FROM et_sectors";
+    private static final String SQL_CREATE = "INSERT INTO et_sectors (sector_id, center_gps, report_date) VALUES(?, ?, ?)";
+    private static final String SQL_FIND_ALL_BETWEEN_DATES = "SELECT * FROM et_sectors c WHERE c.report_date BETWEEN ? AND ?";
+    private static final String SQL_FIND_BY_ID_CURRENT = "SELECT * FROM latest_et_sectors c WHERE c.sector_id = ?  ";
+    private static final String SQL_FIND_BY_ID_HISTORIC= "SELECT * FROM et_sectors c where c.sector_id == ? ";
+    private static final String SQL_DELETE_BEFORE_DATE= " DELETE FROM et_sectors c  WHERE c.report_date < ? ";
+    private static final String SQL_DELETE_ALL= "DELETE FROM et_sectors c ";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
