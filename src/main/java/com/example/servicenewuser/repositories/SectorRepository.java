@@ -1,6 +1,5 @@
 package com.example.servicenewuser.repositories;
 
-import com.example.servicenewuser.domain.CheckPoint;
 import com.example.servicenewuser.domain.Sector;
 
 import java.util.List;

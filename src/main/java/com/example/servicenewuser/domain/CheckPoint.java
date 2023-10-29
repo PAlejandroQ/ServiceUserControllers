@@ -1,7 +1,8 @@
 package com.example.servicenewuser.domain;
 
-import java.awt.*;
 import com.example.servicenewuser.Constants;
+
+import java.awt.*;
 
 public class CheckPoint {
 
