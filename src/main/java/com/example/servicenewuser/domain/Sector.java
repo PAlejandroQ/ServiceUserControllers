@@ -34,6 +34,9 @@ public class Sector {
         this.center_gps = center_gps;
         this.report_date = report_date;
     }
+    public Sector(){
+
+    }
 
     private Integer sectorId;
     private Point center_gps;

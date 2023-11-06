@@ -15,9 +15,15 @@ public interface SectorService {
 
     List<Sector> getHistoricSectorById(int sectorId) throws EtResourceNotFoundException;
 
-    void addSector(int sectorId, Point sectorGps) throws EtBadRequestException;
+    Sector addSector(Sector newSector) throws EtBadRequestException;
 
     void addFullSectors(List<Sector> sectorsNewList) throws EtBadRequestException;
 
     void deleteOldHistoricSectors(long sectorBeforeDate);
+
+    List<Sector> getHistoricSectorsInRange(String start, String end);
+
+    Sector updateSector(Integer sectorId, Point updatedSectorGPS);
+
+    boolean deleteSectorById(Integer sectorId);
 }

@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.postgresql.geometric.PGpoint;
 
 import java.awt.*;
 import java.sql.PreparedStatement;
@@ -94,9 +95,15 @@ public class SectorRepositoryImpl implements SectorRepository {
         if(count == 0)
             throw new EtResourceNotFoundException("Delete failed");
     }
+
+    public static java.awt.Point convertPGPointToAWTPoint(PGpoint pgPoint) {
+        return new java.awt.Point((int) pgPoint.x, (int) pgPoint.y);
+    }
+
     private RowMapper<Sector> sectorRowMapper = ((rs, rowNum) -> {
-        return new Sector(rs.getInt("sector_id"),
-                rs.getObject("center_gps", Point.class),
-                rs.getLong("report_date"));
+        PGpoint pgPoint = (PGpoint) rs.getObject("center_gps"); // Extraer el objeto PGpoint de la base de datos
+        java.awt.Point javaPoint = convertPGPointToAWTPoint(pgPoint);
+
+        return new Sector(rs.getInt("sector_id"), javaPoint, rs.getLong("report_date"));
     });
 }

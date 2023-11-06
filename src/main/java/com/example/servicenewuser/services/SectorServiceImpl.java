@@ -18,7 +18,7 @@ public class SectorServiceImpl implements SectorService{
     SectorRepository sectorRepository;
     @Override
     public List<Sector> getLastSectors() {
-        return null;
+        return sectorRepository.findAllCurrent();
     }
 
     @Override
@@ -37,8 +37,8 @@ public class SectorServiceImpl implements SectorService{
     }
 
     @Override
-    public void addSector(int sectorId, Point sectorGps) throws EtBadRequestException {
-
+    public Sector addSector(Sector newSector) throws EtBadRequestException {
+        return null;
     }
 
     @Override
@@ -49,5 +49,20 @@ public class SectorServiceImpl implements SectorService{
     @Override
     public void deleteOldHistoricSectors(long sectorBeforeDate) {
 
+    }
+
+    @Override
+    public List<Sector> getHistoricSectorsInRange(String start, String end) {
+        return null;
+    }
+
+    @Override
+    public Sector updateSector(Integer sectorId, Point updatedSectorGPS) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteSectorById(Integer sectorId) {
+        return false;
     }
 }
