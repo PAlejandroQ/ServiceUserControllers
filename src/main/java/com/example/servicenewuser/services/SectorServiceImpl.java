@@ -57,6 +57,11 @@ public class SectorServiceImpl implements SectorService{
     }
 
     @Override
+    public void deleteAllSectors() {
+        sectorRepository.deleteAll();
+    }
+
+    @Override
     public Sector updateSector(Integer sectorId, Point updatedSectorGPS) {
         return null;
     }

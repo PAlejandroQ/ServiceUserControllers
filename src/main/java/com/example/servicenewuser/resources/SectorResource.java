@@ -3,6 +3,7 @@ package com.example.servicenewuser.resources;
 import com.example.servicenewuser.domain.Sector;
 import com.example.servicenewuser.exceptions.EtBadRequestException;
 import com.example.servicenewuser.services.SectorService;
+import com.example.servicenewuser.utils.CoordinatesConversorType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,10 @@ import java.util.Map;
 public class SectorResource {
     @Autowired
     SectorService sectorService;
+
+    @Autowired
+    CoordinatesConversorType coordinatesConversorType;
+    Date date = new Date();
     //OK
     @GetMapping("")
     public ResponseEntity<List<Sector>> getLastSectors(){
@@ -58,13 +63,12 @@ public class SectorResource {
                                             @RequestBody Map<String, Object> sectorMap){
         // Extraer los valores del mapa sectorMap
         Integer sectorId = (Integer) sectorMap.get("sectorId");
-        Integer xCoordinate = (Integer) ((Map<String, Object>) sectorMap.get("coordinates")).get("x");
-        Integer yCoordinate = (Integer) ((Map<String, Object>) sectorMap.get("coordinates")).get("y");
-        Date date = new Date();
+        Point point =  coordinatesConversorType.objectToPoint(sectorMap.get("coordinates"));
+
         // Crear un nuevo objeto Sector con los valores extraídos
         Sector newSector = new Sector();
         newSector.setSectorId(sectorId);
-        newSector.setCenter_gps(new Point(xCoordinate,yCoordinate));
+        newSector.setCenter_gps(point);
         newSector.setReport_date(date.getTime());
 
         // Guardar el nuevo sector en tu base de datos
@@ -75,17 +79,19 @@ public class SectorResource {
             throw new EtBadRequestException("Invalid request");
         }
     }
-
-    @PutMapping("/{sectorId}")
-    public ResponseEntity<Sector> updateCoordinateBySector(@PathVariable("sectorId") Integer sectorId,
-                                                                         @PathVariable("newGpsCoordinate") Point updatedSectorGPS){
-
-        Sector updated = sectorService.updateSector(sectorId, updatedSectorGPS);
-        if (updated == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(updated, HttpStatus.OK);
-    }
+//      EL ENDPOINT NO REQUIERE EXISTIR YA QUE LA ACTUALIZACION DE POSICION LO HACE LA VISTA
+//    @PutMapping("/{sectorId}")
+//    public ResponseEntity<Sector> updateCoordinateBySector(@PathVariable("sectorId") Integer sectorId,
+//                                                           @RequestBody Object updatedSectorGPS){
+//        System.out.println(updatedSectorGPS);
+//        Point point =  coordinatesConversorType.objectToPoint(updatedSectorGPS);
+//
+//        Sector updated = sectorService.updateSector(sectorId, point);
+//        if (updated == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        return new ResponseEntity<>(updated, HttpStatus.OK);
+//    }
 
 //    @PutMapping("")
 //    public ResponseEntity<Map<String, Boolean>> updateCoordinates(){
@@ -102,8 +108,9 @@ public class SectorResource {
     }
 
     @DeleteMapping("")
-    public ResponseEntity<List<Sector>> deleteAllSectors(){
-        return null;
+    public ResponseEntity<Void> deleteAllSectors() {
+        sectorService.deleteAllSectors();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 //    @GetMapping("")

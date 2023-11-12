@@ -26,4 +26,6 @@ public interface SectorService {
     Sector updateSector(Integer sectorId, Point updatedSectorGPS);
 
     boolean deleteSectorById(Integer sectorId);
+
+    void deleteAllSectors();
 }
