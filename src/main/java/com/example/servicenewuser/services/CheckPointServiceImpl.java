@@ -1,7 +1,6 @@
 package com.example.servicenewuser.services;
 
 import com.example.servicenewuser.domain.CheckPoint;
-import com.example.servicenewuser.domain.Sector;
 import com.example.servicenewuser.exceptions.EtBadRequestException;
 import com.example.servicenewuser.exceptions.EtResourceNotFoundException;
 import com.example.servicenewuser.repositories.CheckPointRepository;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.List;
 
 @Service
@@ -24,26 +22,30 @@ public class CheckPointServiceImpl implements CheckPointService{
 
     @Override
     public List<CheckPoint> getHistoricCheckPoint() {
-        return  null;
+        return checkPointRepository.findAllHistoric();
     }
 
     @Override
-    public CheckPoint getLastCheckPointByUser(int sectorId) throws EtResourceNotFoundException {
+    public List<CheckPoint> getHistoricCheckPoint(long min, long max) {
+        return  checkPointRepository.findAllBetweenDates(min, max);
+    }
+
+    @Override
+    public CheckPoint getLastCheckPointByUser(int userId) throws EtResourceNotFoundException {
 //        return CheckPointRepository.findLastCurrentByUserId(userId);
-        return null;
+        return checkPointRepository.findByUserIdCurrent(userId);
     }
 
     @Override
-    public List<CheckPoint> getHistoricCheckPointByUser(int sectorId) throws EtResourceNotFoundException {
+    public List<CheckPoint> getHistoricCheckPointByUser(int userId) throws EtResourceNotFoundException {
 //        return checkPointRepository.findAllHistoricByUserId(userId);
-        return checkPointRepository.findByIdHistoric(11230,11235);
+        return checkPointRepository.findByIdHistoric(userId);
     }
 
     @Override
-    public void addCheckPoint(int sectorId, Point sectorGps) throws EtBadRequestException {
-//    CheckPoint newCheckPoint = new CheckPoint();
-//    newCheckPoint.setSectorId(sectorId);
-//    newCheckPoint
+    public Integer addCheckPoint(CheckPoint newCheckPoint) throws EtBadRequestException {
+        newCheckPoint.setSectorId(2);
+        return checkPointRepository.create(newCheckPoint);
     }
 
     @Override

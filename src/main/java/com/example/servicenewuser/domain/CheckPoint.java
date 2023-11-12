@@ -23,6 +23,10 @@ public class CheckPoint {
         this.checkPointDate = checkPointDate;
     }
 
+    public CheckPoint() {
+
+    }
+
     public Integer getCheckpointId() {
         return checkpointId;
     }
