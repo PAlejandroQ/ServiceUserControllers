@@ -7,9 +7,9 @@ import java.util.List;
 public interface SectorRepository {
     List<Sector> findAllCurrent();
     List<Sector> findAllHistoric();
-    Integer create(Sector newCheckPoint);
+    Integer create(Sector newSector);
     List<Sector> findAllBetweenDates(long startDate, long endDate);
-    List<Sector> findByIdCurrent();
+    Sector findByIdCurrent(int sectorId);
     List<Sector> findByIdHistoric(long startDate, long endDate);
     void deleteBeforeDate(Long limitDay);
     void deleteAll();

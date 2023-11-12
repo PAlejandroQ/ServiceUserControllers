@@ -23,12 +23,12 @@ public class SectorServiceImpl implements SectorService{
 
     @Override
     public List<Sector> getHistoricSectors() {
-        return null;
+        return sectorRepository.findAllHistoric();
     }
 
     @Override
     public Sector getLastSectorById(int sectorId) throws EtResourceNotFoundException {
-        return null;
+        return sectorRepository.findByIdCurrent(sectorId);
     }
 
     @Override
@@ -37,8 +37,8 @@ public class SectorServiceImpl implements SectorService{
     }
 
     @Override
-    public Sector addSector(Sector newSector) throws EtBadRequestException {
-        return null;
+    public Integer addSector(Sector newSector) throws EtBadRequestException {
+        return sectorRepository.create(newSector);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class SectorServiceImpl implements SectorService{
     }
 
     @Override
-    public List<Sector> getHistoricSectorsInRange(String start, String end) {
-        return null;
+    public List<Sector> getHistoricSectorsInRange(Long start, Long end) {
+        return sectorRepository.findAllBetweenDates(start, end);
     }
 
     @Override

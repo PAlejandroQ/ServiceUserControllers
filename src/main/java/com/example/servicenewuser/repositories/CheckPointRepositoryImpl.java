@@ -2,8 +2,10 @@ package com.example.servicenewuser.repositories;
 
 import com.example.servicenewuser.Constants;
 import com.example.servicenewuser.domain.CheckPoint;
+import com.example.servicenewuser.domain.Sector;
 import com.example.servicenewuser.exceptions.EtBadRequestException;
 import com.example.servicenewuser.exceptions.EtResourceNotFoundException;
+import org.postgresql.geometric.PGpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -98,12 +100,28 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
         if(count == 0)
             throw new EtResourceNotFoundException("Delete failed");
     }
+
+
+    public static java.awt.Point convertPGPointToAWTPoint(PGpoint pgPoint) {
+        return new java.awt.Point((int) pgPoint.x, (int) pgPoint.y);
+    }
+
+
+/*    private RowMapper<Sector> sectorRowMapper = ((rs, rowNum) -> {
+        PGpoint pgPoint = (PGpoint) rs.getObject("center_gps"); // Extraer el objeto PGpoint de la base de datos
+        java.awt.Point javaPoint = convertPGPointToAWTPoint(pgPoint);
+
+        return new Sector(rs.getInt("sector_id"), javaPoint, rs.getLong("report_date"));
+    });*/
     private RowMapper<CheckPoint> checkPointRowMapper = ((rs, rowNum) -> {
-        return new CheckPoint(rs.getInt("checkpoint_id"),
+    PGpoint pgPoint = (PGpoint) rs.getObject("point_gps");
+    java.awt.Point javaPoint = convertPGPointToAWTPoint(pgPoint);
+    return new CheckPoint(rs.getInt("checkpoint_id"),
                 rs.getInt("user_id"),
                 rs.getInt("sector_id"),
-                (Point) rs.getObject("point_gps"),
-                (Constants.StateUser) rs.getObject("state"),
+                javaPoint,
+//                (Constants.StateUser) rs.getObject("state"),
+                null,
                 rs.getLong("report_date"));
     });
 }

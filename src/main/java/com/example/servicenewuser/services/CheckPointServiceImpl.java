@@ -19,7 +19,7 @@ public class CheckPointServiceImpl implements CheckPointService{
     CheckPointRepository checkPointRepository;
     @Override
     public List<CheckPoint> getLastCheckPoint() {
-        return null;
+        return checkPointRepository.findAllCurrent();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CheckPointServiceImpl implements CheckPointService{
     @Override
     public List<CheckPoint> getHistoricCheckPointByUser(int sectorId) throws EtResourceNotFoundException {
 //        return checkPointRepository.findAllHistoricByUserId(userId);
-        return null;
+        return checkPointRepository.findByIdHistoric(11230,11235);
     }
 
     @Override

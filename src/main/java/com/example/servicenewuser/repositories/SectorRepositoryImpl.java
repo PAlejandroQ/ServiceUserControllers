@@ -11,7 +11,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.postgresql.geometric.PGpoint;
 
-import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -38,15 +37,19 @@ public class SectorRepositoryImpl implements SectorRepository {
         return jdbcTemplate.query(SQL_FIND_ALL_HISTORIC, new Object[]{}, sectorRowMapper);
     }
 
+    public static PGpoint convertAWTPointToPGPoint(java.awt.Point awtPoint) {
+        return new PGpoint(awtPoint.getX(), awtPoint.getY());
+    }
     @Override
-    public Integer create(Sector newCheckPoint) {
+    public Integer create(Sector newSector) {
         try {
+            PGpoint pGpoint = convertAWTPointToPGPoint(newSector.getCenter_gps());
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, newCheckPoint.getSectorId());
-                ps.setObject(2, newCheckPoint.getCenter_gps());
-                ps.setLong(3, newCheckPoint.getReport_date());
+                ps.setInt(1, newSector.getSectorId());
+                ps.setObject(2, pGpoint);
+                ps.setLong(3, newSector.getReport_date());
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("sector_id");
@@ -58,18 +61,18 @@ public class SectorRepositoryImpl implements SectorRepository {
     @Override
     public List<Sector> findAllBetweenDates(long startDate, long endDate) {
         try {
-            return jdbcTemplate.query(SQL_FIND_ALL_BETWEEN_DATES, new Object[]{}, sectorRowMapper);
+            return jdbcTemplate.query(SQL_FIND_ALL_BETWEEN_DATES, new Object[]{startDate,endDate}, sectorRowMapper);
         }catch (Exception e) {
-            throw new EtResourceNotFoundException("Category not found");
+            throw new EtResourceNotFoundException("Sectors not found");
         }
     }
 
     @Override
-    public List<Sector> findByIdCurrent() {
+    public Sector findByIdCurrent(int sectorId) {
         try {
-            return jdbcTemplate.query(SQL_FIND_BY_ID_CURRENT, new Object[]{}, sectorRowMapper);
+            return jdbcTemplate.query(SQL_FIND_BY_ID_CURRENT, new Object[]{sectorId}, sectorRowMapper).get(0);
         }catch (Exception e) {
-            throw new EtResourceNotFoundException("Category not found");
+            throw new EtResourceNotFoundException("Sectors not found");
         }
     }
 
@@ -78,7 +81,7 @@ public class SectorRepositoryImpl implements SectorRepository {
         try {
             return jdbcTemplate.query(SQL_FIND_BY_ID_HISTORIC, new Object[]{}, sectorRowMapper);
         }catch (Exception e) {
-            throw new EtResourceNotFoundException("Category not found");
+            throw new EtResourceNotFoundException("Sectors not found");
         }
     }
 
