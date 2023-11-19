@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-pasive-watcher
+spec:
+  selector:
+    app: passive-watcher  # Asegúrate de que coincide con las etiquetas de tu Deployment
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080  # Puerto en el que escucha tu aplicación dentro del contenedor
+  type: LoadBalancer

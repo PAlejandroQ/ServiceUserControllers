@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgresdb
+  name: postgresql
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: postgresdb
+  template:
+    metadata:
+      labels:
+        app: postgresdb
+    spec:
+      containers:
+        - image: postgres
+          name: postgresql
+          ports:
+            - containerPort: 5432
+              name: postgresql-port
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: secret-postgres
+                  key: DB_USERNAME
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-postgres
+                  key: DB_PASSWORD
+          volumeMounts:
+            - mountPath: /scripts
+              name: init-db
+#          command: ["/bin/sh", "-c"]
+#          args: ["psql -U $POSTGRES_USER --file /scripts/init-script.sql"]
+#            - mountPath: /var/lib/postgresql/data
+#              name: postgres-data
+      volumes:
+##        - name: postgres-data
+##          persistentVolumeClaim:
+##            claimName: postgres-pv-claim
+        - configMap:
+            name: configmap-init-postgres
+          name: init-db
