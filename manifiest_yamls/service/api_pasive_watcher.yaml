@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-passive-watcher
+  labels:
+    app: passive-watcher
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: passive-watcher
+  template:
+    metadata:
+      name: pod-passive-watcher
+      labels:
+        app: passive-watcher
+    spec:
+      containers:
+        - name: container-passive-watcher
+          image: alejandroqo/service_users
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-postgres
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-postgres
+                  key: DB_PORT
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-postgres
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-postgres
+                  key: DB_PASSWORD
+
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerhub-credentials
+      

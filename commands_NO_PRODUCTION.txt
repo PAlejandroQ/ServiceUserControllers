@@ -1,7 +1,0 @@
-docker container run --name postgresdb -e POSTGRES_PASSWORD=admin -d -p 5432:5432 postgres
-docker cp proyect_db.sql postgresdb:/
-psql -U postgres --file proyect_db.sql
-psql -h localhost -d expensetrackerdb -U expensetracker -p 5432
-psql -h localhost -d project_db -U user_watcher -p 5432
-docker container exec -it postgresdb psql -h localhost -d project_db -U user_watcher -p 5432
-delete from et_users;
