@@ -124,8 +124,8 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
                 rs.getInt("user_id"),
                 rs.getInt("sector_id"),
                 javaPoint,
-                Constants.StateUser.valueOf((String) rs.getObject("state")),
-//                null,
+//                Constants.StateUser.valueOf((String) rs.getObject("state")),
+                null,
                 rs.getLong("report_date"));
     });
 }

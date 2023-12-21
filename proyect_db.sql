@@ -32,7 +32,7 @@ create table et_checkpoints(
     user_id integer not null references et_users(user_id),
     sector_id integer references et_sectors(sector_id) ,
     point_gps point not null,
-    state user_state not null ,
+    state user_state null, --not null ,
     report_date bigint not null
 
 );
@@ -44,9 +44,9 @@ foreign key (user_id) references et_users(user_id);
 alter table et_checkpoints add constraint sector_constrain_fk
 foreign key (sector_id) references et_sectors(sector_id);
 
-create sequence et_users_seq increment 1 start  1;
-create sequence et_sector_seq increment 1 start 1;
-create sequence et_checkpoint_seq increment 1 start 1000;
+create sequence et_users_seq minvalue 0 increment 1 start  0 ;
+create sequence et_sector_seq minvalue 0 increment 1 start 0;
+create sequence et_checkpoint_seq minvalue 0 increment 1 start 1000;
 
 CREATE VIEW latest_et_sectors AS
 SELECT *
