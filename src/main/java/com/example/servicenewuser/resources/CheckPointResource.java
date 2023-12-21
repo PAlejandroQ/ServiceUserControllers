@@ -5,6 +5,7 @@ import com.example.servicenewuser.domain.CheckPoint;
 import com.example.servicenewuser.exceptions.EtBadRequestException;
 import com.example.servicenewuser.services.CheckPointService;
 import com.example.servicenewuser.utils.CoordinatesConversorType;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,9 +67,10 @@ public class CheckPointResource {
     }
     // OK
     @PostMapping("")
-    public ResponseEntity<CheckPoint> addCheckPoint(@RequestBody Map<String, Object> checkPointMap) {
+    public ResponseEntity<CheckPoint> addCheckPoint(@RequestBody Map<String, Object> checkPointMap, HttpServletRequest request) {
         // Extraer los valores del mapa checkPointMap
-        Integer userId = (Integer) checkPointMap.get("userId");
+//        Integer userId = (Integer) checkPointMap.get("userId");
+        Integer userId = (Integer) request.getAttribute("userId");
         Point point = coordinatesConversorType.objectToPoint(checkPointMap.get("coordinates"));
         Constants.StateUser stateUser = Constants.StateUser.valueOf((String) checkPointMap.get("state"));
         // Crear un nuevo objeto CheckPoint con los valores extraídos

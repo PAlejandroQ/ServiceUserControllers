@@ -18,7 +18,8 @@ public class ServiceNewUserApplication {
 		FilterRegistrationBean<AuthFilter> registrationBean = new FilterRegistrationBean<>();
 			AuthFilter authFilter = new AuthFilter();
 			registrationBean.setFilter(authFilter);
-			registrationBean.addUrlPatterns("/api/categories/*");
+			registrationBean.addUrlPatterns("/api/sectors/*");
+			registrationBean.addUrlPatterns("/api/checkpoints/*");
 			return registrationBean;
 	}
 
