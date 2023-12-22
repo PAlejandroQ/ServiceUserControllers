@@ -13,16 +13,19 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.List;
 
 @Repository
 public class CheckPointRepositoryImpl implements CheckPointRepository{
 
     private static final String SQL_FIND_ALL_CURRENT = "SELECT * FROM latest_et_checkpoints";
+    private static final String SQL_FIND_ALL_LABEL_SECTORS = "SELECT * FROM et_sectors_of_users";
     private static final String SQL_FIND_ALL_HISTORIC = "SELECT * FROM et_checkpoints";
-    private static final String SQL_CREATE = "INSERT INTO et_checkpoints (checkpoint_id, user_id, sector_id, point_gps, state, report_date) VALUES(NEXTVAL('et_checkpoint_seq'), ? ,?,?,?,?)";
+    private static final String SQL_CREATE = "INSERT INTO et_checkpoints (checkpoint_id, user_id, sector_id, point_gps, state, report_date) VALUES(NEXTVAL('et_checkpoint_seq'), ? ,?,?,?::user_state,?)";
     private static final String SQL_FIND_ALL_BETWEEN_DATES = "SELECT * FROM et_checkpoints c WHERE c.report_date BETWEEN ? AND ?";
     private static final String SQL_FIND_BY_ID_CURRENT = "SELECT * FROM latest_et_checkpoints c WHERE c.user_id = ? ";
     private static final String SQL_FIND_BY_ID_HISTORIC= "SELECT * FROM et_checkpoints c WHERE c.user_id = ?";
@@ -38,6 +41,10 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
         return jdbcTemplate.query(SQL_FIND_ALL_CURRENT, new Object[]{}, checkPointRowMapper);
     }
 
+    public List<Point> findAllSectorLabels() {
+        return jdbcTemplate.query(SQL_FIND_ALL_LABEL_SECTORS, new Object[]{}, sectorLabelsRowMapper);
+    }
+
     @Override
     public List<CheckPoint> findAllHistoric() {
         return jdbcTemplate.query(SQL_FIND_ALL_HISTORIC, new Object[]{}, checkPointRowMapper);
@@ -51,10 +58,10 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, newCheckPoint.getUserId());
-                ps.setInt(2, newCheckPoint.getSectorId());
+                ps.setObject(2, newCheckPoint.getSectorId());
                 ps.setObject(3, pGpoint);
-//                ps.setString(4, newCheckPoint.getState().toString());
-                ps.setObject(4,null);
+                ps.setObject(4, newCheckPoint.getState().name(), Types.OTHER);
+//                ps.setObject(4,null);
                 ps.setLong(5, newCheckPoint.getCheckPointDate());
                 return ps;
             }, keyHolder);
@@ -120,12 +127,21 @@ public class CheckPointRepositoryImpl implements CheckPointRepository{
     private RowMapper<CheckPoint> checkPointRowMapper = ((rs, rowNum) -> {
     PGpoint pgPoint = (PGpoint) rs.getObject("point_gps");
     java.awt.Point javaPoint = convertPGPointToAWTPoint(pgPoint);
+    String estadoDesdeDB = rs.getString("state");
+    Constants.StateUser estadoUsuario = (estadoDesdeDB != null) ? Constants.StateUser.valueOf(estadoDesdeDB) : null;
     return new CheckPoint(rs.getInt("checkpoint_id"),
                 rs.getInt("user_id"),
                 rs.getInt("sector_id"),
                 javaPoint,
-//                Constants.StateUser.valueOf((String) rs.getObject("state")),
-                null,
+                estadoUsuario,
+//                null,
                 rs.getLong("report_date"));
+    });
+
+    private RowMapper<Point> sectorLabelsRowMapper = ((rs, rowNum) -> {
+//        PGpoint pgPoint = (PGpoint) rs.getObject("point_gps");
+//        java.awt.Point javaPoint = convertPGPointToAWTPoint(pgPoint);
+        return new Point(rs.getInt("user_id"),
+                rs.getInt("sector_id"));
     });
 }

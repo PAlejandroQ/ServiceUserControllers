@@ -25,12 +25,17 @@ create table et_sectors(
     report_date bigint not null
 );
 
+create table et_sectors_of_users(
+    user_id integer primary key not null references et_users(user_id),
+    sector_id integer null references  et_sectors(sector_id)
+);
+
 CREATE TYPE user_state AS ENUM ('untracked', 'ok', 'alert','danger');
 
 create table et_checkpoints(
     checkpoint_id integer primary key not null,
     user_id integer not null references et_users(user_id),
-    sector_id integer references et_sectors(sector_id) ,
+    sector_id integer null references et_sectors(sector_id) ,
     point_gps point not null,
     state user_state null, --not null ,
     report_date bigint not null
@@ -43,6 +48,12 @@ foreign key (user_id) references et_users(user_id);
 
 alter table et_checkpoints add constraint sector_constrain_fk
 foreign key (sector_id) references et_sectors(sector_id);
+
+alter table et_sectors_of_users add constraint sector_of_users_constrain_user_fk
+    foreign key (user_id) references et_users(user_id);
+
+alter table et_sectors_of_users add constraint sector_of_users_constrain_sector_fk
+    foreign key (sector_id) references et_sectors(sector_id);
 
 create sequence et_users_seq minvalue 0 increment 1 start  0 ;
 create sequence et_sector_seq minvalue 0 increment 1 start 0;
